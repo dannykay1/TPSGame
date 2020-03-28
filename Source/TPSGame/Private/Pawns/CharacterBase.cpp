@@ -7,6 +7,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Weapons/WeaponBase.h"
+#include "Components/SkeletalMeshComponent.h"
+
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -47,6 +50,17 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();	
+
+	// Spawn a default weapon
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SetOwner(this);
+		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, CurrentWeapon->GetWeaponAttachSocketName());
+	}
 }
 
 
@@ -77,6 +91,9 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAxis("TurnRate", this, &ACharacterBase::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacterBase::LookUpAtRate);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::StopFire);
 
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::EndAiming);
@@ -127,6 +144,24 @@ void ACharacterBase::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+
+void ACharacterBase::StartFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StartFire();
+	}
+}
+
+
+void ACharacterBase::StopFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
 	}
 }
 

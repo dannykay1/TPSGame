@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+/**
+ * Base class for all characters.
+ */
 UCLASS()
 class TPSGAME_API ACharacterBase : public ACharacter
 {
@@ -40,6 +43,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class UCameraComponent* FollowCamera;
 
+	/* Weapon character starts with. */
+	UPROPERTY(EditDefaultsOnly, Category = "CharacterBase")
+	TSubclassOf<class AWeaponBase> StarterWeaponClass;
+
+	/* Currently equipped weapon. */
+	class AWeaponBase* CurrentWeapon;
+
 	/* Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseTurnRate;
@@ -51,6 +61,9 @@ protected:
 	/* Used if character is aming down sights. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
 	uint8 bIsAiming : 1;
+
+	void StartFire();
+	void StopFire();
 
 	/* Called for forwards/backward input. */
 	void MoveForward(float Value);

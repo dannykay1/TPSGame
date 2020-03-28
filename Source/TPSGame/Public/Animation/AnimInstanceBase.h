@@ -6,11 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "AnimInstanceBase.generated.h"
 
-// Forward declaration.
-class ACharacterBase;
-
 /**
- * 
+ * Base class for all bi-pedal characters.
  */
 UCLASS()
 class TPSGAME_API UAnimInstanceBase : public UAnimInstance
@@ -30,7 +27,7 @@ public:
 protected:
 	/* The owner of the animation. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
-	ACharacterBase* CharacterOwner;
+	class ACharacterBase* CharacterOwner;
 
 	/* Is character moving? */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
