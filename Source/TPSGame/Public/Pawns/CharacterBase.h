@@ -70,9 +70,15 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/* Sets bIsAiming to true. */
+	/* Character is aiming down ironsight. Adjusts speed and animation to match. */
 	void BeginAiming();
-	
-	/* Sets bIsAiming to false. */
+
+	/* Character stops aiming down ironsight. Adjusts speed and animation to match. */
 	void EndAiming();
+
+	/* Character enters crouch mode. Adjusts speed and animation to match. */
+	void BeginCrouching();
+
+	/* Character exits crouch mode. Adjusts speed and animation to match. */
+	void EndCrouching();
 };

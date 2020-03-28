@@ -36,6 +36,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	uint8 bIsMoving : 1;
 
+	/* Is character falling?*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	uint8 bIsFalling: 1;
+
 	/* Is character dead?  Based on HealthComponent. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	uint8 bIsDead : 1;
@@ -43,6 +47,10 @@ protected:
 	/* Is character aiming?*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	uint8 bIsAiming : 1;
+
+	/* Is character crouching?*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	uint8 bIsCrouching : 1;
 
 	/* Speed of the character. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")

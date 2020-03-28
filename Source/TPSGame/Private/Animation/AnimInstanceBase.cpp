@@ -2,6 +2,7 @@
 
 #include "Animation/AnimInstanceBase.h"
 #include "Pawns/CharacterBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 /* Sets all default values. */
@@ -43,8 +44,17 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 	Velocity.Z = 0.0f;
 
 	Speed = Velocity.Size();
+
 	bIsMoving = Speed > 0.1f;
+
+	if (CharacterOwner->GetCharacterMovement())
+	{
+		bIsFalling = CharacterOwner->GetCharacterMovement()->IsFalling();
+		bIsCrouching = CharacterOwner->GetCharacterMovement()->IsCrouching();
+	}
+
 	bIsAiming = CharacterOwner->GetIsAiming();
+
 	Direction = CalculateDirection(Velocity, CharacterOwner->GetActorRotation());
 }
 

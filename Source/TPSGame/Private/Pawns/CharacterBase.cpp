@@ -28,6 +28,7 @@ ACharacterBase::ACharacterBase()
 
 	// Configure character movement
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -79,6 +80,9 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::EndAiming);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::BeginCrouching);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacterBase::EndCrouching);
 }
 
 
@@ -138,4 +142,18 @@ void ACharacterBase::EndAiming()
 {
 	bIsAiming = false;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+}
+
+
+void ACharacterBase::BeginCrouching()
+{
+	Crouch();
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 170.0f;
+}
+
+
+void ACharacterBase::EndCrouching()
+{
+	UnCrouch();
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 170.0f;
 }
