@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Sound/SoundCue.h"
+#include "TPSGame/TPSGame.h"
 
 
 /* Sets default values for this actor's properties. */
@@ -16,10 +17,10 @@ AWeaponBase::AWeaponBase()
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetRootComponent(WeaponMesh);
 
-	// Setup socket names. 
 	WeaponAttachSocketName = "WeaponSocket_WeaponName";
 	MuzzleSocketName = "MuzzleSocket";
 
+	bIsAutomaticFire = false;
 	BulletSpread = 2.0f;
 	RateOfFire = 600;
 }
@@ -37,8 +38,9 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::StartFire()
 {
 	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
-	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &AWeaponBase::Fire, TimeBetweenShots, true, FirstDelay);
+	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &AWeaponBase::Fire, TimeBetweenShots, bIsAutomaticFire, FirstDelay);
 }
+
 
 void AWeaponBase::StopFire()
 {

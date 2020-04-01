@@ -60,6 +60,10 @@ protected:
 	/* Used with TimerHandle_TimeBetweenShots to control fire rate. */
 	float LastFireTime;
 
+	/* Will weapon fire while fire input held down. */
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	uint8 bIsAutomaticFire : 1;
+
 	/* RPM - Bullets per minute fired by weapon. */
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float RateOfFire;

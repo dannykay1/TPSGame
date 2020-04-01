@@ -49,6 +49,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	uint8 bIsCrouching : 1;
 
+	/* Pitch of character.  Used for aim offsets. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
+	float Pitch;
+
 	/* Speed of the character. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Animation")
 	float Speed;

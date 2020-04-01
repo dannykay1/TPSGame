@@ -22,7 +22,7 @@ AWeapon_InstantHit::AWeapon_InstantHit()
 
 void AWeapon_InstantHit::Fire()
 {
-	Super::Fire();
+	Super::Fire();	
 
 	AActor* MyOwner = GetOwner();
 	if (MyOwner)
@@ -81,7 +81,7 @@ void AWeapon_InstantHit::PlayImpactEffects(EPhysicalSurface SurfaceType, FVector
 	UParticleSystem* SelectedEffect = nullptr;
 	switch (SurfaceType)
 	{
-	case SURFACE_DEFAULT:
+	case SURFACE_BASIC:
 	case SURFACE_CRITICAL:
 		SelectedEffect = CriticalImpactEffect;
 		break;

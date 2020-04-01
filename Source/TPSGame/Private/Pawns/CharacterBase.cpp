@@ -17,7 +17,8 @@ ACharacterBase::ACharacterBase()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(45.f, 100.0f);
-	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Block);
 	bUseControllerRotationYaw = true;
 
 	bIsAiming = false;

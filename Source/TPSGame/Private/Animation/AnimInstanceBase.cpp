@@ -3,6 +3,7 @@
 #include "Animation/AnimInstanceBase.h"
 #include "Pawns/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 /* Sets all default values. */
@@ -56,5 +57,14 @@ void UAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 	bIsAiming = CharacterOwner->GetIsAiming();
 
 	Direction = CalculateDirection(Velocity, CharacterOwner->GetActorRotation());
+
+	FRotator ControlRotation = CharacterOwner->GetControlRotation();
+	FRotator ActorRotation = CharacterOwner->GetActorRotation();
+
+	FRotator CurrentRotation = FRotator(Pitch, 0.0f, 0.0f);
+	FRotator TargetRotation = UKismetMathLibrary::ComposeRotators(ControlRotation, ActorRotation);
+
+	FRotator FinalRotator = UKismetMathLibrary::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 15.0f);
+	Pitch = UKismetMathLibrary::ClampAngle(FinalRotator.Pitch, -90.0f, 90.0f);
 }
 
