@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Weapons/WeaponBase.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "TPSGame/TPSGame.h"
 
 
 // Sets default values
@@ -16,6 +17,7 @@ ACharacterBase::ACharacterBase()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(45.f, 100.0f);
+	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 	bUseControllerRotationYaw = true;
 
 	bIsAiming = false;
@@ -100,6 +102,22 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::BeginCrouching);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacterBase::EndCrouching);
+}
+
+
+FVector ACharacterBase::GetPawnViewLocation() const
+{
+	if (FollowCamera && CameraBoom)
+	{
+		FVector ViewLocation = FollowCamera->GetComponentLocation();
+
+		// Offset the view location by arm length so character cannot hit actors behind this character.
+		ViewLocation += FollowCamera->GetForwardVector() * CameraBoom->TargetArmLength;
+
+		return ViewLocation;
+	}
+
+	return Super::GetPawnViewLocation();
 }
 
 

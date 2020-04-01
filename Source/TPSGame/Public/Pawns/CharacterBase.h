@@ -24,12 +24,15 @@ public:
 	/* Called to bind functionality to input. */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/* Gets the camera location used for shooting. */
+	virtual FVector GetPawnViewLocation() const override;
+
 	/* Returns CameraBoom subobject. */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/* Returns FollowCamera subobject. */
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	/* Returns if characteris aiming. */
-	FORCEINLINE uint8 GetIsAiming() { return bIsAiming; }
+	/* Returns if character is aiming. */
+	FORCEINLINE uint8 GetIsAiming() const { return bIsAiming; }
 
 protected:
 	/* Called when the game starts or when spawned. */
@@ -62,7 +65,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
 	uint8 bIsAiming : 1;
 
+	/* Starts the fire function on the current weapon. */
 	void StartFire();
+	
+	/* Stops the fire function on the current weapon. */
 	void StopFire();
 
 	/* Called for forwards/backward input. */

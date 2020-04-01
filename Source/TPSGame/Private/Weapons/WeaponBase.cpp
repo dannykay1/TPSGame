@@ -13,6 +13,7 @@ AWeaponBase::AWeaponBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetRootComponent(WeaponMesh);
 
 	// Setup socket names. 
@@ -47,19 +48,25 @@ void AWeaponBase::StopFire()
 
 void AWeaponBase::Fire()
 {
-	AActor* MyOwner = GetOwner();
+	if (MuzzleEffect)
+	{
+		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, WeaponMesh, MuzzleSocketName);
+	}
+
+	if (MuzzleSound)
+	{
+		UGameplayStatics::SpawnSoundAttached(MuzzleSound, WeaponMesh, MuzzleSocketName);
+	}
+
+	APawn* MyOwner = Cast<APawn>(GetOwner());
 	if (MyOwner)
 	{
-		if (MuzzleEffect)
+		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
+		if (PC)
 		{
-			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, WeaponMesh, MuzzleSocketName);
+			PC->ClientPlayCameraShake(FireCamShake);
 		}
-
-		if (MuzzleSound)
-		{
-			UGameplayStatics::SpawnSoundAttached(MuzzleSound, WeaponMesh, MuzzleSocketName);
-		}
-
-		LastFireTime = GetWorld()->TimeSeconds;
 	}
+
+	LastFireTime = GetWorld()->TimeSeconds;
 }
