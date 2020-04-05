@@ -15,7 +15,16 @@ public:
 	/* Sets default values for this actor's properties. */
 	AWeaponBase();
 
+	/* Returns socket name where weapon is attached. */
 	FORCEINLINE FName GetWeaponAttachSocketName() const { return WeaponAttachSocketName; }
+
+	/* Implemented in blueprints to handle playing fire montage on weapon. */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Weapon")
+	void PlayFireAnimMontage();
+
+	/* Implemented in blueprints to handle playing reload montage on weapon. */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Weapon")
+	void PlayReloadAnimMontage();
 
 	/* Starts the TimerHandle_TimeBetweenShots for firing the weapon. */
 	void StartFire();
@@ -53,6 +62,22 @@ protected:
 	/* Sound to play when firing the weapon. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	class USoundCue* MuzzleSound;
+
+	/* Montage to play on character firing from the hip. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	class UAnimMontage* FireMontageHip;
+
+	/* Montage to play on character when firing from ironsights. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	class UAnimMontage* FireMontageIronsights;
+
+	/* Montage to play on character when reloading and NOT aiming. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	class UAnimMontage* ReloadMontageHip;
+
+	/* Montage to play on character when reloading an is aiming. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	class UAnimMontage* ReloadMontageIronsights;
 
 	/* Timer handle that controls when owner of weapon can fire. */
 	FTimerHandle TimerHandle_TimeBetweenShots;

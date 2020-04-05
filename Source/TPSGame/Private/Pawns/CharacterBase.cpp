@@ -98,6 +98,8 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::StartFire);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::StopFire);
 
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &ACharacterBase::Reload);
+
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::EndAiming);
 
@@ -171,6 +173,7 @@ void ACharacterBase::StartFire()
 {
 	if (CurrentWeapon)
 	{
+		StopAnimMontage();
 		CurrentWeapon->StartFire();
 	}
 }
@@ -181,6 +184,15 @@ void ACharacterBase::StopFire()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->StopFire();
+	}
+}
+
+
+void ACharacterBase::Reload()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->PlayReloadAnimMontage();
 	}
 }
 

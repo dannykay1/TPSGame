@@ -7,6 +7,8 @@
 #include "Sound/SoundCue.h"
 #include "TPSGame/TPSGame.h"
 #include "Components/SceneComponent.h"
+#include "Pawns/CharacterBase.h"
+#include "Animation/AnimMontage.h"
 
 
 /* Sets default values for this actor's properties. */
@@ -51,14 +53,17 @@ void AWeaponBase::StopFire()
 
 void AWeaponBase::Fire()
 {
+	PlayFireAnimMontage();
+
 	if (MuzzleEffect)
 	{
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, WeaponMesh, MuzzleSocketName);
 	}
+	
+	AActor* MyOwner = GetOwner();
 
 	if (MuzzleSound)
 	{
-		AActor* MyOwner = GetOwner();
 		if (MyOwner)
 		{
 			FVector EyeLocation = FVector::ZeroVector;
@@ -72,10 +77,10 @@ void AWeaponBase::Fire()
 		}
 	}
 
-	APawn* MyOwner = Cast<APawn>(GetOwner());
-	if (MyOwner)
+	APawn* PawnOwner = Cast<APawn>(MyOwner);
+	if (PawnOwner)
 	{
-		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
+		APlayerController* PC = Cast<APlayerController>(PawnOwner->GetController());
 		if (PC)
 		{
 			PC->ClientPlayCameraShake(FireCamShake);

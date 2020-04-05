@@ -71,6 +71,9 @@ protected:
 	/* Stops the fire function on the current weapon. */
 	void StopFire();
 
+	/* Starts the reload operation on the current weapon. */
+	void Reload();
+
 	/* Called for forwards/backward input. */
 	void MoveForward(float Value);
 

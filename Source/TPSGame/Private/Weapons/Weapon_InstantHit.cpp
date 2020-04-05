@@ -11,6 +11,7 @@
 #include "TimerManager.h"
 #include "GameFramework/DamageType.h"
 #include "TPSGame/TPSGame.h"
+#include "Pawns/CharacterBase.h"
 
 
 AWeapon_InstantHit::AWeapon_InstantHit()
