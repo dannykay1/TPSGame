@@ -98,6 +98,9 @@ protected:
 	/* Character stops aiming down ironsight. Adjusts speed and animation to match. */
 	void EndAiming();
 
+	/* Toggles the crouch functionality on the character. */
+	void ToggleCrouch();
+
 	/* Character enters crouch mode. Adjusts speed and animation to match. */
 	void BeginCrouching();
 

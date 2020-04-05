@@ -103,8 +103,7 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::EndAiming);
 
-	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::BeginCrouching);
-	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacterBase::EndCrouching);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::ToggleCrouch);
 }
 
 
@@ -211,10 +210,30 @@ void ACharacterBase::EndAiming()
 }
 
 
+void ACharacterBase::ToggleCrouch()
+{
+	if (GetCharacterMovement()->IsCrouching())
+	{
+		EndCrouching();
+	}
+	else
+	{
+		BeginCrouching();
+	}
+}
+
+
 void ACharacterBase::BeginCrouching()
 {
-	Crouch();
-	GetCharacterMovement()->MaxWalkSpeedCrouched = 170.0f;
+	if (GetCharacterMovement()->IsCrouching())
+	{
+		EndCrouching();
+	}
+	else
+	{
+		Crouch();
+		GetCharacterMovement()->MaxWalkSpeedCrouched = 170.0f;
+	}
 }
 
 
