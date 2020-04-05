@@ -17,6 +17,7 @@ AWeapon_InstantHit::AWeapon_InstantHit()
 {
 	TracerTargetName = "Target";
 	BaseDamage = 20.0f;
+	NumShotsPerFire = 1;
 }
 
 
@@ -24,54 +25,57 @@ void AWeapon_InstantHit::Fire()
 {
 	Super::Fire();	
 
-	AActor* MyOwner = GetOwner();
-	if (MyOwner)
+	for (int i = 0; i < NumShotsPerFire; i++)
 	{
-		FVector EyeLocation;
-		FRotator EyeRotation;
-		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
-
-		FVector ShotDirection = EyeRotation.Vector();
-
-		// Bullet Spread
-		float HalfRad = FMath::DegreesToRadians(BulletSpread);
-		ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
-
-		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
-
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(MyOwner);
-		QueryParams.AddIgnoredActor(this);
-		QueryParams.bTraceComplex = true;
-		QueryParams.bReturnPhysicalMaterial = true;
-
-		// Particle "Target" parameter
-		FVector TracerEndPoint = TraceEnd;
-
-		EPhysicalSurface SurfaceType = SurfaceType_Default;
-
-		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_WEAPON, QueryParams))
+		AActor* MyOwner = GetOwner();
+		if (MyOwner)
 		{
-			// Blocking hit! Process damage
-			AActor* HitActor = Hit.GetActor();
+			FVector EyeLocation;
+			FRotator EyeRotation;
+			MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 
-			SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			FVector ShotDirection = EyeRotation.Vector();
 
-			float ActualDamage = BaseDamage;
-			if (SurfaceType == SURFACE_CRITICAL)
+			// Bullet Spread
+			float HalfRad = FMath::DegreesToRadians(BulletSpread);
+			ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+
+			FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
+
+			FCollisionQueryParams QueryParams;
+			QueryParams.AddIgnoredActor(MyOwner);
+			QueryParams.AddIgnoredActor(this);
+			QueryParams.bTraceComplex = true;
+			QueryParams.bReturnPhysicalMaterial = true;
+
+			// Particle "Target" parameter
+			FVector TracerEndPoint = TraceEnd;
+
+			EPhysicalSurface SurfaceType = SurfaceType_Default;
+
+			FHitResult Hit;
+			if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_WEAPON, QueryParams))
 			{
-				ActualDamage *= 4.0f;
+				// Blocking hit! Process damage
+				AActor* HitActor = Hit.GetActor();
+
+				SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+
+				float ActualDamage = BaseDamage;
+				if (SurfaceType == SURFACE_CRITICAL)
+				{
+					ActualDamage *= 4.0f;
+				}
+
+				UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), MyOwner, UDamageType::StaticClass());
+
+				PlayImpactEffects(SurfaceType, Hit.ImpactPoint);
+
+				TracerEndPoint = Hit.ImpactPoint;
 			}
 
-			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), MyOwner, UDamageType::StaticClass());
-
-			PlayImpactEffects(SurfaceType, Hit.ImpactPoint);
-
-			TracerEndPoint = Hit.ImpactPoint;
+			PlayFireEffects(TracerEndPoint);
 		}
-
-		PlayFireEffects(TracerEndPoint);
 	}
 }
 

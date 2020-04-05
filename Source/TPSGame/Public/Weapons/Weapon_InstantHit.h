@@ -32,7 +32,11 @@ protected:
 
 	/* Critical hit impact effect. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Instant Hit Weapon")
-	class UParticleSystem* CriticalImpactEffect;	
+	class UParticleSystem* CriticalImpactEffect;
+
+	/* How many line traces do perform per fire. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Instant Hit Weapon")
+	int NumShotsPerFire;
 
 	/* Damage when hitting non critical hits. */
 	UPROPERTY(EditDefaultsOnly, Category = "Instant Hit Weapon")
