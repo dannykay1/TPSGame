@@ -6,6 +6,7 @@
 #include "TimerManager.h"
 #include "Sound/SoundCue.h"
 #include "TPSGame/TPSGame.h"
+#include "Components/SceneComponent.h"
 
 
 /* Sets default values for this actor's properties. */
@@ -57,7 +58,18 @@ void AWeaponBase::Fire()
 
 	if (MuzzleSound)
 	{
-		UGameplayStatics::SpawnSoundAttached(MuzzleSound, WeaponMesh, MuzzleSocketName);
+		AActor* MyOwner = GetOwner();
+		if (MyOwner)
+		{
+			FVector EyeLocation = FVector::ZeroVector;
+			FRotator EyeRotation;
+			MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+			UGameplayStatics::SpawnSoundAttached(MuzzleSound, MyOwner->GetRootComponent(), NAME_None, EyeLocation, EAttachLocation::SnapToTarget);
+		}
+		else
+		{
+			UGameplayStatics::SpawnSoundAttached(MuzzleSound, WeaponMesh, MuzzleSocketName);
+		}
 	}
 
 	APawn* MyOwner = Cast<APawn>(GetOwner());
