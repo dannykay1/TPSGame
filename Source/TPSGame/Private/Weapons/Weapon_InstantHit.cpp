@@ -8,10 +8,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
-#include "TimerManager.h"
 #include "GameFramework/DamageType.h"
 #include "TPSGame/TPSGame.h"
-#include "Pawns/CharacterBase.h"
 
 
 AWeapon_InstantHit::AWeapon_InstantHit()

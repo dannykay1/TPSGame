@@ -36,11 +36,7 @@ protected:
 
 	/* How many line traces do perform per fire. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Instant Hit Weapon")
-	int NumShotsPerFire;
-
-	/* Damage when hitting non critical hits. */
-	UPROPERTY(EditDefaultsOnly, Category = "Instant Hit Weapon")
-	float BaseDamage;
+	int NumShotsPerFire;	
 
 	/* Overrides the fire function to perform the instant hit functionality. */
 	virtual void Fire() override;

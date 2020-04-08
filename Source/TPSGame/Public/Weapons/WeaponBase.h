@@ -82,6 +82,10 @@ protected:
 	/* Timer handle that controls when owner of weapon can fire. */
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
+	/* Damage when hitting non critical hits. */
+	UPROPERTY(EditDefaultsOnly, Category = "Instant Hit Weapon")
+	float BaseDamage;
+
 	/* Used with TimerHandle_TimeBetweenShots to control fire rate. */
 	float LastFireTime;
 
