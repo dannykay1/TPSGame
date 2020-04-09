@@ -23,9 +23,5 @@ protected:
 
 	/* Projectile that will be spawned when firing. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile Weapon")
-	TSubclassOf<class AActor> ProjectileToSpawn;
-
-	/* Speed of projectile when firing. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile Weapon")
-	int MuzzleSpeed;
+	TSubclassOf<class AProjectileBase> ProjectileToSpawn;
 };

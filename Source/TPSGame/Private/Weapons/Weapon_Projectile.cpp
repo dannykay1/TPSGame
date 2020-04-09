@@ -6,11 +6,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Projectiles/ProjectileBase.h"
 
 
 AWeapon_Projectile::AWeapon_Projectile()
 {
-	MuzzleSpeed = 1500.0f;
 }
 
 
@@ -53,9 +53,10 @@ void AWeapon_Projectile::Fire()
 
 			FTransform SpawnTransform = FTransform(LookRotation, MuzzleLocation, FVector::OneVector);
 
-			AActor* Projectile = GetWorld()->SpawnActorDeferred<AActor>(ProjectileToSpawn, SpawnTransform, MyOwner, MyOwner->GetInstigator(), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			AProjectileBase* Projectile = GetWorld()->SpawnActorDeferred<AProjectileBase>(ProjectileToSpawn, SpawnTransform, MyOwner, MyOwner->GetInstigator(), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 			if (Projectile)
 			{
+				Projectile->SetDamage(BaseDamage);
 				UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 			}
 		}

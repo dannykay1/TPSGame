@@ -83,7 +83,7 @@ protected:
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
 	/* Damage when hitting non critical hits. */
-	UPROPERTY(EditDefaultsOnly, Category = "Instant Hit Weapon")
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float BaseDamage;
 
 	/* Used with TimerHandle_TimeBetweenShots to control fire rate. */
