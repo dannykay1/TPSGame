@@ -38,6 +38,40 @@ void AWeaponBase::BeginPlay()
 }
 
 
+void AWeaponBase::PlayFireAnimMontage()
+{
+	ACharacterBase* MyOwner = Cast<ACharacterBase>(GetOwner());
+	if (MyOwner)
+	{
+		if (MyOwner->GetIsAiming())
+		{
+			MyOwner->PlayAnimMontage(FireMontageIronsights);
+		}
+		else
+		{
+			MyOwner->PlayAnimMontage(FireMontageHip);
+		}
+	}
+}
+
+
+void AWeaponBase::PlayReloadAnimMontage()
+{
+	ACharacterBase* MyOwner = Cast<ACharacterBase>(GetOwner());
+	if (MyOwner)
+	{
+		if (MyOwner->GetIsAiming())
+		{
+			MyOwner->PlayAnimMontage(ReloadMontageIronsights);
+		}
+		else
+		{
+			MyOwner->PlayAnimMontage(ReloadMontageHip);
+		}
+	}
+}
+
+
 void AWeaponBase::StartFire()
 {
 	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);

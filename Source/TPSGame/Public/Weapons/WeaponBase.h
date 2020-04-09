@@ -18,12 +18,10 @@ public:
 	/* Returns socket name where weapon is attached. */
 	FORCEINLINE FName GetWeaponAttachSocketName() const { return WeaponAttachSocketName; }
 
-	/* Implemented in blueprints to handle playing fire montage on weapon. */
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Weapon")
+	/* Handles playing fire montage on weapon. */
 	void PlayFireAnimMontage();
 
-	/* Implemented in blueprints to handle playing reload montage on weapon. */
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Weapon")
+	/* Handles playing reload montage on weapon. */
 	void PlayReloadAnimMontage();
 
 	/* Starts the TimerHandle_TimeBetweenShots for firing the weapon. */
