@@ -30,6 +30,10 @@ public:
 	/* Clears the TimerHandle_TimeBetweenShots. */
 	void StopFire();
 
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+
 protected:
 	/* Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
@@ -101,4 +105,17 @@ protected:
 
 	/* Derived from RateOfFire. */
 	float TimeBetweenShots;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammo", meta = (ClampMin = 1))
+	int MaxAmmoCount;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ammo")
+	int CurrentAmmoCount;
+
+	/* Reloads the weapon's ammo. */
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void ReloadWeapon();
+
+	bool HasEnoughAmmo() const;
+	void ConsumeAmmo();
 };

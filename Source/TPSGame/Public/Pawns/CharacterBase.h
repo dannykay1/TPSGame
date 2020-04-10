@@ -29,8 +29,14 @@ public:
 
 	/* Returns CameraBoom subobject. */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
 	/* Returns FollowCamera subobject. */
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	/* Returns the character's currently equipped weapon. */
+	UFUNCTION(BlueprintPure, Category = "Character")
+	FORCEINLINE class AWeaponBase* GetCurrentWeapon() const { return CurrentWeapon; }
+
 	/* Returns if character is aiming. */
 	FORCEINLINE uint8 GetIsAiming() const { return bIsAiming; }
 
@@ -51,6 +57,7 @@ protected:
 	TSubclassOf<class AWeaponBase> StarterWeaponClass;
 
 	/* Currently equipped weapon. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
 	class AWeaponBase* CurrentWeapon;
 
 	/* Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -61,7 +68,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate;
 
-	/* Used if character is aming down sights. */
+	/* Used if character is aiming down sights. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
 	uint8 bIsAiming : 1;
 

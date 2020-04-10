@@ -26,6 +26,7 @@ AWeaponBase::AWeaponBase()
 	bIsAutomaticFire = false;
 	BulletSpread = 2.0f;
 	RateOfFire = 600;
+	MaxAmmoCount = CurrentAmmoCount = 30;
 }
 
 
@@ -33,6 +34,7 @@ AWeaponBase::AWeaponBase()
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
+
 	LastFireTime = -100.0f;
 	TimeBetweenShots = 60 / RateOfFire;
 }
@@ -57,6 +59,9 @@ void AWeaponBase::PlayFireAnimMontage()
 
 void AWeaponBase::PlayReloadAnimMontage()
 {
+	if (CurrentAmmoCount >= MaxAmmoCount)
+		return;
+
 	ACharacterBase* MyOwner = Cast<ACharacterBase>(GetOwner());
 	if (MyOwner)
 	{
@@ -74,6 +79,12 @@ void AWeaponBase::PlayReloadAnimMontage()
 
 void AWeaponBase::StartFire()
 {
+	if (!HasEnoughAmmo())
+	{
+		StopFire();
+		return;
+	}
+
 	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
 	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &AWeaponBase::Fire, TimeBetweenShots, bIsAutomaticFire, FirstDelay);
 }
@@ -87,13 +98,21 @@ void AWeaponBase::StopFire()
 
 void AWeaponBase::Fire()
 {
+	if (!HasEnoughAmmo())
+	{
+		StopFire();
+		return;
+	}
+
+	ConsumeAmmo();
+
 	PlayFireAnimMontage();
 
 	if (MuzzleEffect)
 	{
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, WeaponMesh, MuzzleSocketName);
 	}
-	
+
 	AActor* MyOwner = GetOwner();
 
 	if (MuzzleSound)
@@ -123,3 +142,30 @@ void AWeaponBase::Fire()
 
 	LastFireTime = GetWorld()->TimeSeconds;
 }
+
+
+void AWeaponBase::ReloadWeapon()
+{
+	CurrentAmmoCount = MaxAmmoCount;
+}
+
+
+bool AWeaponBase::HasEnoughAmmo() const
+{
+	return CurrentAmmoCount > 0;
+}
+
+
+void AWeaponBase::ConsumeAmmo()
+{
+	CurrentAmmoCount = FMath::Clamp(CurrentAmmoCount - 1, 0, MaxAmmoCount);
+}
+
+#if WITH_EDITOR
+void AWeaponBase::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	CurrentAmmoCount = MaxAmmoCount;
+}
+#endif
