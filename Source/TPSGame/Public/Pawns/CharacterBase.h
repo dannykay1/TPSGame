@@ -40,6 +40,9 @@ public:
 	/* Returns if character is aiming. */
 	FORCEINLINE uint8 GetIsAiming() const { return bIsAiming; }
 
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void GiveWeapon(TSubclassOf<class AWeaponBase> WeaponToGive);
+
 protected:
 	/* Called when the game starts or when spawned. */
 	virtual void BeginPlay() override;
@@ -56,9 +59,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "CharacterBase")
 	TSubclassOf<class AWeaponBase> StarterWeaponClass;
 
+	/* Socket name on where secondary mesh is attached. */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FName SecondaryWeaponSocketName;
+
+	/* Anim montage to play when switching weapons. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterBase")
+	class UAnimMontage* SwitchWeaponMontage;
+
 	/* Currently equipped weapon. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
 	class AWeaponBase* CurrentWeapon;
+
+	/* Reference to characters weapons. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
+	TArray<class AWeaponBase*> Weapons;
 
 	/* Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -80,6 +95,13 @@ protected:
 
 	/* Starts the reload operation on the current weapon. */
 	void Reload();
+
+	/* Starts the switch weapons functionality. */
+	void PlaySwitchWeaponsAnimMontage();
+
+	/* Swaps the current and secondary weapons. */
+	UFUNCTION(BlueprintCallable, Category = "CharacterBase")
+	void SwapWeapons();
 
 	/* Called for forwards/backward input. */
 	void MoveForward(float Value);

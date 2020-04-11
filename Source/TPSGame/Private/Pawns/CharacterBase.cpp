@@ -27,6 +27,8 @@ ACharacterBase::ACharacterBase()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
+	SecondaryWeaponSocketName = "Socket_SecondaryWeapon";
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -52,18 +54,10 @@ ACharacterBase::ACharacterBase()
 // Called when the game starts or when spawned
 void ACharacterBase::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 
 	// Spawn a default weapon
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	CurrentWeapon = GetWorld()->SpawnActor<AWeaponBase>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->SetOwner(this);
-		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, CurrentWeapon->GetWeaponAttachSocketName());
-	}
+	GiveWeapon(StarterWeaponClass);
 }
 
 
@@ -99,11 +93,39 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::StopFire);
 
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &ACharacterBase::Reload);
+	PlayerInputComponent->BindAction("SwitchWeapons", IE_Pressed, this, &ACharacterBase::PlaySwitchWeaponsAnimMontage);
 
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::BeginAiming);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::EndAiming);
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::ToggleCrouch);
+}
+
+
+void ACharacterBase::GiveWeapon(TSubclassOf<class AWeaponBase> WeaponToGive)
+{
+	if (!WeaponToGive || Weapons.Num() >= 2)
+		return;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	AWeaponBase* SpawnedWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponToGive, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (SpawnedWeapon)
+	{
+		SpawnedWeapon->SetOwner(this);
+
+		FName SocketName = Weapons.Num() == 0 
+			? SpawnedWeapon->GetWeaponAttachSocketName()
+			: SecondaryWeaponSocketName;
+
+		SpawnedWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+	}
+
+	Weapons.Add(SpawnedWeapon);
+
+	if (!CurrentWeapon)
+		CurrentWeapon = SpawnedWeapon;
 }
 
 
@@ -192,6 +214,44 @@ void ACharacterBase::Reload()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->PlayReloadAnimMontage();
+	}
+}
+
+
+void ACharacterBase::PlaySwitchWeaponsAnimMontage()
+{
+	if (Weapons.Num() <= 1)
+		return;
+
+	StopFire();
+
+	if (SwitchWeaponMontage)
+	{
+		PlayAnimMontage(SwitchWeaponMontage);
+	}
+}
+
+
+void ACharacterBase::SwapWeapons()
+{
+	if (Weapons.Num() <= 1)
+		return;
+
+	if (CurrentWeapon == Weapons[0])
+	{
+		Weapons[0]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SecondaryWeaponSocketName);
+
+		Weapons[1]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Weapons[1]->GetWeaponAttachSocketName());
+
+		CurrentWeapon = Weapons[1];
+	}
+	else
+	{
+		Weapons[1]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SecondaryWeaponSocketName);
+
+		Weapons[0]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Weapons[0]->GetWeaponAttachSocketName());
+
+		CurrentWeapon = Weapons[0];
 	}
 }
 
