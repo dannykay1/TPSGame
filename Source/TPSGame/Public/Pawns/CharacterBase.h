@@ -35,7 +35,7 @@ public:
 
 	/* Returns the character's currently equipped weapon. */
 	UFUNCTION(BlueprintPure, Category = "Character")
-	FORCEINLINE class AWeaponBase* GetCurrentWeapon() const { return CurrentWeapon; }
+	class AWeaponBase* GetCurrentWeapon() const;
 
 	/* Returns if character is aiming. */
 	FORCEINLINE uint8 GetIsAiming() const { return bIsAiming; }
@@ -67,9 +67,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterBase")
 	class UAnimMontage* SwitchWeaponMontage;
 
-	/* Currently equipped weapon. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")
-	class AWeaponBase* CurrentWeapon;
+	/* Weapon index of Weapons. */
+	int CurrentWeaponIdx;
 
 	/* Reference to characters weapons. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CharacterBase")

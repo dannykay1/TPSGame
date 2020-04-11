@@ -27,6 +27,7 @@ ACharacterBase::ACharacterBase()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
+	CurrentWeaponIdx = -1;
 	SecondaryWeaponSocketName = "Socket_SecondaryWeapon";
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -102,6 +103,14 @@ void ACharacterBase::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 }
 
 
+AWeaponBase* ACharacterBase::GetCurrentWeapon() const 
+{
+	return Weapons.Num() == 0
+		? nullptr
+		: Weapons[CurrentWeaponIdx];
+}
+
+
 void ACharacterBase::GiveWeapon(TSubclassOf<class AWeaponBase> WeaponToGive)
 {
 	if (!WeaponToGive || Weapons.Num() >= 2)
@@ -115,7 +124,7 @@ void ACharacterBase::GiveWeapon(TSubclassOf<class AWeaponBase> WeaponToGive)
 	{
 		SpawnedWeapon->SetOwner(this);
 
-		FName SocketName = Weapons.Num() == 0 
+		FName SocketName = Weapons.Num() == 0
 			? SpawnedWeapon->GetWeaponAttachSocketName()
 			: SecondaryWeaponSocketName;
 
@@ -124,8 +133,7 @@ void ACharacterBase::GiveWeapon(TSubclassOf<class AWeaponBase> WeaponToGive)
 
 	Weapons.Add(SpawnedWeapon);
 
-	if (!CurrentWeapon)
-		CurrentWeapon = SpawnedWeapon;
+	CurrentWeaponIdx = 0;
 }
 
 
@@ -192,28 +200,28 @@ void ACharacterBase::MoveRight(float Value)
 
 void ACharacterBase::StartFire()
 {
-	if (CurrentWeapon)
+	if (GetCurrentWeapon())
 	{
 		StopAnimMontage();
-		CurrentWeapon->StartFire();
+		GetCurrentWeapon()->StartFire();
 	}
 }
 
 
 void ACharacterBase::StopFire()
 {
-	if (CurrentWeapon)
+	if (GetCurrentWeapon())
 	{
-		CurrentWeapon->StopFire();
+		GetCurrentWeapon()->StopFire();
 	}
 }
 
 
 void ACharacterBase::Reload()
 {
-	if (CurrentWeapon)
+	if (GetCurrentWeapon())
 	{
-		CurrentWeapon->PlayReloadAnimMontage();
+		GetCurrentWeapon()->PlayReloadAnimMontage();
 	}
 }
 
@@ -237,13 +245,13 @@ void ACharacterBase::SwapWeapons()
 	if (Weapons.Num() <= 1)
 		return;
 
-	if (CurrentWeapon == Weapons[0])
+	if (GetCurrentWeapon() == Weapons[0])
 	{
 		Weapons[0]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SecondaryWeaponSocketName);
 
 		Weapons[1]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Weapons[1]->GetWeaponAttachSocketName());
 
-		CurrentWeapon = Weapons[1];
+		CurrentWeaponIdx = 1;
 	}
 	else
 	{
@@ -251,7 +259,7 @@ void ACharacterBase::SwapWeapons()
 
 		Weapons[0]->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Weapons[0]->GetWeaponAttachSocketName());
 
-		CurrentWeapon = Weapons[0];
+		CurrentWeaponIdx = 0;
 	}
 }
 
