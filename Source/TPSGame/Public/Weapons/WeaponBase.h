@@ -81,6 +81,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	class UAnimMontage* ReloadMontageIronsights;
 
+	/* Weapon icon to be updated in the HUD. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	class UTexture* WeaponIcon;
+
 	/* Timer handle that controls when owner of weapon can fire. */
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
@@ -116,6 +120,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void ReloadWeapon();
 
+	/* Returns true if CurrentAmmoCount > 0. */
 	bool HasEnoughAmmo() const;
+
+	/* Reduces CurrentAmmoCount by 1. */
 	void ConsumeAmmo();
 };
